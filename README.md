@@ -2,15 +2,15 @@
 Super Awesome Cool Kids Inc, SNACK MAPS. An application that allows users to find all available snack choices near the set location and narrowing it down to a tailored list specifically for the user.
 
 # Group
-Pothitos Pizanias - 
+Pothitos Pizanias - Project Manager, Engineer
 
-Reid Clark - 
+Reid Clark - Engineer I
 
-Tyler Buock - 
+Kyle Kassi - Engineer II
 
-Kyle Kassi - 
+Lucas Adduci - Engineer III
 
-Lucas Adduci - 
+Tyler Buock - Engineer IIII
 
-Anthony Ugolini - 
+Anthony Ugolini - Customer Service Representative, Engineer
 
