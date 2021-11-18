@@ -4,7 +4,6 @@ Super Awesome Cool Kids Inc, SNACK MAPS. An application that allows users to fin
 # Group
 Pothitos Pizanias - 
 
-
 Reid Clark - 
 
 Tyler Buock - 
