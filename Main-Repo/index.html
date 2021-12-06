@@ -170,15 +170,60 @@
         handleLocationError(false, infoWindow);
       }
     }
+    
+    function randomFoodPicker() {
+      var foodKeyArray = [
+        'burger',
+        'pizza' ,
+        'asian',
+        'healthy food',
+        'indian',
+        'greek',
+        'fast food'
+      ];
 
-    // Handle a geolocation error
-    function handleLocationError(browserHasGeolocation, infoWindow) {
-      // Set default location to YSU
-      pos = { lat: 41.1066, lng: -80.6481 };
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: pos,
-        zoom: 15
-      });
+      var randomNumber = Math.floor(Math.random()*foodKeyArray.length);
+
+      var randFood = randomNumber;
+
+      if (randFood == 0) {
+        randFood = "burger";
+      }
+      else if (randFood == 1) {
+        randFood = "pizza";
+      }
+      else if (randFood == 2) {
+        randFood = "asian";
+      }
+      else if (randFood == 3) {
+        randFood = "healthy food";
+      }
+      else if (randFood == 4) {
+        randFood = "indian";
+      }
+      else if (randFood == 5) {
+        randFood = "greek";
+      }
+      else if (randFood == 6) {
+        randFood = "fast food";
+      }
+
+      return randFood;
+    }
+
+    function refreshPage(){
+      window.location.reload();
+    }
+
+      // Handle a geolocation error
+      function handleLocationError(browserHasGeolocation, infoWindow) {
+        // Set default location to YSU
+        pos = { lat: 41.1066, lng: -80.6481 };
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: pos,
+          zoom: 15
+        });
+      }
 
       // Display an InfoWindow at the map center
       infoWindow.setPosition(pos);
@@ -317,6 +362,13 @@
     document.getElementById("searchButton").addEventListener("click", function() {
       var nameField = document.getElementById('text').value;
       food = nameField;
+      initMap();
+    });
+    
+     // Search for random food category
+    document.getElementById("randomButton").addEventListener("click", function() {
+      randomFoodPicker();
+      food = randFood;
       initMap();
     });
 
