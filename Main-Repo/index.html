@@ -368,7 +368,12 @@
     var nameField = document.getElementById('text').value;
     food = nameField;
     initMap();
-    document.getElementById("currentFood").innerHTML = "You are currently searching for " + food;
+    if (nameField !== "") {
+      document.getElementById("currentFood").innerHTML = "You are currently searching for " + food;
+    }
+    else {
+      alert('Please enter a category in the search field.')
+    }
   });
 
   // Search for random food category
