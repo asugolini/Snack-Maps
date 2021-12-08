@@ -181,46 +181,59 @@
   function randomFoodPicker() {
 
     var foodKeyArray = [
-      'burger',
+      'burgers',
       'pizza' ,
       'asian',
       'healthy food',
       'indian',
       'greek',
-      'fast food'
+      'fast food',
+      'mexican',
+      'italian',
+      'sushi',
+
     ];
 
     var randomNumber = Math.floor(Math.random()*foodKeyArray.length);
 
     food = "";
 
-    var food = randomNumber;
+    food = randomNumber;
 
     if (food == 0) {
-      food = "burger";
+      food = "burgers";
     }
     else if (food == 1) {
       food = "pizza";
     }
     else if (food == 2) {
-      food = "asian";
+      food = "chinese food";
     }
     else if (food == 3) {
       food = "healthy food";
     }
     else if (food == 4) {
-      food = "indian";
+      food = "indian food";
     }
     else if (food == 5) {
-      food = "greek";
+      food = "greek food";
     }
     else if (food == 6) {
       food = "fast food";
     }
+    else if (food == 7) {
+      food = "mexican food";
+    }
+    else if (food == 8) {
+      food = "italian food";
+    }
+    else if (food == 9) {
+      food = "sushi";
+    }
+
 
     return food;
   }
-
   // Handle a geolocation error
   function handleLocationError(browserHasGeolocation, infoWindow) {
     // Set default location to YSU
