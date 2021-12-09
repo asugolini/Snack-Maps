@@ -100,7 +100,7 @@
 </head>
 
 <body>
-	
+
 <div id="panel"></div>
 
 <div id="map"></div>
@@ -150,12 +150,12 @@
           lat: position.coords.latitude,
           lng: position.coords.longitude
         };
+		// set the map to the new map, with focus on collected location
         map = new google.maps.Map(document.getElementById('map'), {
           center: pos,
           zoom: 15
         });
         bounds.extend(pos);
-
         infoWindow.setPosition(pos);
         infoWindow.setContent('Location found.');
         infoWindow.open(map);
@@ -190,7 +190,8 @@
       'sushi',
 
     ];
-    /*randomNumber() assigns the food variable to a random value and has a set food choice per value
+    /*
+	 *randomNumber() assigns the food variable to a random value and has a set food choice per value
 	 * based on the value randomly chosen, and returns choice string for search
 	 */
     var randomNumber = Math.floor(Math.random()*foodKeyArray.length);
@@ -236,9 +237,9 @@
     return food;
   }
 
-  /*BUGTESTING
+  /*
   * handleLocationError() resets the location if a GPS approx cannot be determined
-  *YSU is chosen for demonstration purposes, the reset location is arbitrary
+  * YSU is chosen for demonstration purposes, the reset location is arbitrary
   */
   function handleLocationError(browserHasGeolocation, infoWindow) {
     //reset to default (YSU)
@@ -291,7 +292,6 @@
    * createMarkers() accepts the places given by the API, and for each given place,
    * sets a marker down in said location based on given location data
    */
-  // Set markers at the location of each place result
   function createMarkers(places) {
     places.forEach(place => {
       let marker = new google.maps.Marker({
@@ -324,7 +324,6 @@
    * showDetails() accepts the place result, marker, and status of chosen location 
    * and displays the new information window of selected location
    */
-  // Builds an InfoWindow to display details above the marker
   function showDetails(placeResult, marker, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
       let placeInfowindow = new google.maps.InfoWindow();
@@ -401,9 +400,11 @@
     var nameField = document.getElementById('text').value;
     food = nameField;
     initMap();
+	//if the textbox is not empty, search for given input
     if (nameField !== "") {
       document.getElementById("currentFood").innerHTML = "You are currently searching for " + food;
     }
+	//if textbox is empty, prompt the user for correction
     else {
       alert('Please enter a category in the search field.')
     }
