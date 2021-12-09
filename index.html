@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<!-- Initalize main page-->
+<head>
+  <title>SnackMaps</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <style>
+
+    html,
+    body {
+      height: 100%;
+      margin: 0px;
+      padding: 0;
+    }
+
+    /* Styling for the map*/
+    #map {
+      height: 100%;
+      width: 80%;
+      float: left;
+      background-color: grey;
+    }
+
+    /* Styling for the info pane */
+    #panel {
+      height: 100%;
+      width: null;
+      background-color: white;
+      position: fixed;
+      z-index: 1;
+      overflow-x: hidden;
+      transition: all .2s ease-out;
+    }
+
+    .open {
+      width: 20%;
+    }
+
+    .hero {
+      width: 100%;
+      height: auto;
+      max-height: 166px;
+      display: block;
+    }
+
+    .place,
+    p {
+      font-family: 'open sans', arial, sans-serif;
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+    .details {
+      color: darkslategrey;
+    }
+
+    a {
+      text-decoration: none;
+      color: cadetblue;
+    }
+
+    /* Styling for the search pane */
+    #search{
+      height: 100%;
+      width: 20%;
+      background-color: white;
+      position: fixed;
+      text-align: center;
+      right: 1px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #04AA6D;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    .container {
+      padding: 16px;
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<div id="search">
+
+  <h1>SnackMaps</h1>
+
+  <div class="container">
+
+    <label for="textbox"><b>Food Category</b></label>
+    <input id="text" placeholder="Enter Food Category" name="textbox" required>
+    <button id="searchButton">Search</button>
+    <div class ="button-wrapper">
+      <h3 id="currentFood"></h3>
+      <button id="randomButton" onclick="randomFoodPicker()">Random Search</button>
+
+    </div>
+
+  </div>
+
+</div>
+<!--Main SNACK MAPS script-->
+<script>
+  //Initalize variables
+  let pos;
+  let map;
+  let bounds;
+  let infoWindow;
+  let currentInfoWindow;
+  let service;
+  let infoPane;
+  let food = "burgers";
+  let randFood = randomFoodPicker()
+  //Initialize map
+  function initMap() {
+    bounds = new google.maps.LatLngBounds();
+    infoWindow = new google.maps.InfoWindow;
+    currentInfoWindow = infoWindow;
+
+    infoPane = document.getElementById('panel');
+
+    // Try HTML5 geolocation
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        pos = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: pos,
+          zoom: 15
+        });
+        bounds.extend(pos);
+
+        infoWindow.setPosition(pos);
+        infoWindow.setContent('Location found.');
+        infoWindow.open(map);
+        map.setCenter(pos);
+
+        // Call Places Nearby Search on user's location
+        getNearbyPlaces(pos);
+      }, () => {
+        // Browser supports geolocation, but user has denied permission
+        handleLocationError(true, infoWindow);
+      });
+    } else {
+      // Browser doesn't support geolocation
+      handleLocationError(false, infoWindow);
+    }
+  }
+/*
+ *randomFoodPicker() initializes an array of given food choices, assigns each choice to a value, and 
+ */
+  function randomFoodPicker() {
+
+    var foodKeyArray = [
+      'burgers',
+      'pizza' ,
+      'asian',
+      'healthy food',
+      'indian',
+      'greek',
+      'fast food',
+      'mexican',
+      'italian',
+      'sushi',
+
+    ];
+    /*randomNumber() assigns the food variable to a random value and has a set food choice per value
+	 * based on the value randomly chosen, and returns choice string for search
+	 */
+    var randomNumber = Math.floor(Math.random()*foodKeyArray.length);
+    //Initialize food choice to "" by default
+    food = "";
+    //set food to new choice of random food
+    food = randomNumber;
+    //Assign for random variable
+    switch(food)
+    {
+      case 0:
+        food = "burgers";
+        break;
+      case 1:
+        food = "pizza";
+        break;
+      case 2:
+        food = "chinese food";
+        break;
+      case 3:
+        food = "healthy food";
+        break;
+      case 4:
+        food = "indian food";
+        break;
+      case 5:
+        food = "greek food";
+        break;
+      case 6:
+        food = "fast food";
+        break;
+      case 7:
+        food = "mexican food";
+        break;
+      case 8:
+        food = "italian food";
+        break;
+      case 9:
+        food = "sushi";
+        break;
+    }
+    //return result
+    return food;
+  }
+
+  /*BUGTESTING
+  * handleLocationError() resets the location if a GPS approx cannot be determined
+  *YSU is chosen for demonstration purposes, the reset location is arbitrary
+  */
+  function handleLocationError(browserHasGeolocation, infoWindow) {
+    //reset to default (YSU)
+    pos = { lat: 41.1066, lng: -80.6481 };
+    map = new google.maps.Map(document.getElementById('map'), {
+      center: pos,
+      zoom: 15
+    });
+
+    // Display an InfoWindow at the map center
+    infoWindow.setPosition(pos);
+    infoWindow.setContent(browserHasGeolocation ?
+      'Geolocation permissions denied. Using default location.' :
+      'Error: Your browser doesn\'t support geolocation.');
+    infoWindow.open(map);
+    currentInfoWindow = infoWindow;
+
+    // Call Places Nearby Search on the default location
+    getNearbyPlaces(pos);
+  }
+
+   /*
+   * getNearbyPlaces() accepts your current position and sends a request to GoogleMaps API
+   * for a rank of location based on the distance of your current location with a search
+   * keyword of "food"
+   */
+  function getNearbyPlaces(position) {
+    let request = {
+      location: position,
+      rankBy: google.maps.places.RankBy.DISTANCE,
+      keyword: food
+    };
+
+    service = new google.maps.places.PlacesService(map);
+    service.nearbySearch(request, nearbyCallback);
+  }
+
+  /*
+   * nearbyCallBack() accepts the results of the search and status of the selected businesses
+   * it filters inactive business locations, and calls back the createMarkers() function to
+   * handle the display of the end result
+   */
+  function nearbyCallback(results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+      createMarkers(results);
+    }
+  }
+
+  /*
+   * createMarkers() accepts the places given by the API, and for each given place,
+   * sets a marker down in said location based on given location data
+   */
+  // Set markers at the location of each place result
+  function createMarkers(places) {
+    places.forEach(place => {
+      let marker = new google.maps.Marker({
+        position: place.geometry.location,
+        map: map,
+        title: place.name
+      });
+      // Add click listener to each marker
+      google.maps.event.addListener(marker, 'click', () => {
+        let request = {
+          placeId: place.place_id,
+          fields: ['name', 'formatted_address', 'geometry', 'rating',
+            'website', 'photos']
+        };
+        /* Only fetch the details of a place when the user clicks on a marker.
+         * If we fetch the details for all place results as soon as we get
+         * the search response, we will hit API rate limits. */
+        service.getDetails(request, (placeResult, status) => {
+          showDetails(placeResult, marker, status)
+        });
+      });
+      // Adjust the map bounds to include the location of this marker
+      bounds.extend(place.geometry.location);
+    });
+    /* Once all the markers have been placed, adjust the bounds of the map to
+     * show all the markers within the visible area. */
+    map.fitBounds(bounds);
+  }
+  /*
+   * showDetails() accepts the place result, marker, and status of chosen location 
+   * and displays the new information window of selected location
+   */
+  // Builds an InfoWindow to display details above the marker
+  function showDetails(placeResult, marker, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+      let placeInfowindow = new google.maps.InfoWindow();
+      let rating = "None";
+      if (placeResult.rating) rating = placeResult.rating;
+      placeInfowindow.setContent('<div><strong>' + placeResult.name +
+        '</strong><br>' + 'Rating: ' + rating + '</div>');
+      placeInfowindow.open(marker.map, marker);
+      currentInfoWindow.close();
+      currentInfoWindow = placeInfowindow;
+      showPanel(placeResult);
+    } else {
+	  //if showDetails() failed, display error message and status
+      console.log('showDetails failed: ' + status);
+    }
+  }
+
+  /*
+   * showPanel() accepts the place result, closes any already open information windows,
+   * clears any previous information, then constructs and displays new information window
+   */
+  function showPanel(placeResult) {
+    // If infoPane is already open, close it
+    if (infoPane.classList.contains("open")) {
+      infoPane.classList.remove("open");
+    }
+
+    // Clear the previous details
+    while (infoPane.lastChild) {
+      infoPane.removeChild(infoPane.lastChild);
+    }
+
+    // Add the primary photo, if there is one
+    if (placeResult.photos) {
+      let firstPhoto = placeResult.photos[0];
+      let photo = document.createElement('img');
+      photo.classList.add('hero');
+      photo.src = firstPhoto.getUrl();
+      infoPane.appendChild(photo);
+    }
+
+    // Add place details with text formatting
+    let name = document.createElement('h1');
+    name.classList.add('place');
+    name.textContent = placeResult.name;
+    infoPane.appendChild(name);
+    if (placeResult.rating) {
+      let rating = document.createElement('p');
+      rating.classList.add('details');
+      rating.textContent = `Rating: ${placeResult.rating} \u272e`;
+      infoPane.appendChild(rating);
+    }
+    let address = document.createElement('p');
+    address.classList.add('details');
+    address.textContent = placeResult.formatted_address;
+    infoPane.appendChild(address);
+    if (placeResult.website) {
+      let websitePara = document.createElement('p');
+      let websiteLink = document.createElement('a');
+      let websiteUrl = document.createTextNode(placeResult.website);
+      websiteLink.appendChild(websiteUrl);
+      websiteLink.title = placeResult.website;
+      websiteLink.href = placeResult.website;
+      websitePara.appendChild(websiteLink);
+      infoPane.appendChild(websitePara);
+    }
+
+    // Open the infoPane
+    infoPane.classList.add("open");
+  }
+
+  // Search for specified food category
+  document.getElementById("searchButton").addEventListener("click", function() {
+    var nameField = document.getElementById('text').value;
+    food = nameField;
+    initMap();
+    if (nameField !== "") {
+      document.getElementById("currentFood").innerHTML = "You are currently searching for " + food;
+    }
+    else {
+      alert('Please enter a category in the search field.')
+    }
+  });
+
+  // Search for random food category
+  document.getElementById("randomButton").addEventListener("click", function() {
+    food = randFood;
+    // update Map
+    initMap();
+    document.getElementById("currentFood").innerHTML = "You are currently searching for " + food;
+    randFood = randomFoodPicker();
+  });
+
+
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_s0yMlGZskaCo0dpT2iWcVxZo3KqT0n4&libraries=places&callback=initMap">
+</script>
+</body>
+
+</html>
